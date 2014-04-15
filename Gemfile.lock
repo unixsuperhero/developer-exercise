@@ -1,0 +1,28 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    coderay (1.1.0)
+    json (1.8.1)
+    method_source (0.8.2)
+    pry (0.9.12.6)
+      coderay (~> 1.0)
+      method_source (~> 0.8)
+      slop (~> 3.4)
+    pry-rails (0.3.2)
+      pry (>= 0.9.10)
+    rake (10.1.0)
+    rdoc (4.1.1)
+      json (~> 1.4)
+    sdoc (0.4.0)
+      json (~> 1.8)
+      rdoc (~> 4.0, < 5.0)
+    slop (3.5.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  pry
+  pry-rails
+  rake
+  sdoc

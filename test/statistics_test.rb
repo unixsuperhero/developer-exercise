@@ -240,6 +240,26 @@ describe 'Exercise' do
         YearCollection.new(year_set).by_year(2001).count.must_equal 2
       end
     end
+
+    describe '#by_team' do
+      it 'should return a new YearCollection' do
+        YearCollection.new(year_set).by_team(2001).must_be_instance_of YearCollection
+      end
+
+      it 'should return a subset of the original collection' do
+        YearCollection.new(year_set).by_team('OAK').count.must_equal 3
+      end
+    end
+
+    describe '#by_year' do
+      it 'should return a new YearCollection' do
+        YearCollection.new(year_set).by_year(2001).must_be_instance_of YearCollection
+      end
+
+      it 'should return a subset of the original collection' do
+        YearCollection.new(year_set).by_year(2001).count.must_equal 2
+      end
+    end
   end
 end
 

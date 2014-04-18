@@ -187,7 +187,7 @@ SAMPLE
                              '3B' =>   3, # 15 + (3 * 3) => 24
                              'HR' =>   4  # 24 + (4 * 4) => 40
 
-        this_year.slugging_percentage.must_equal (40.to_f / 100.to_f)
+        this_year.slugging_percentage.must_equal (40 / 100.to_f)
       end
     end
   end

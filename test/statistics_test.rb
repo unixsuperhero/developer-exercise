@@ -2,7 +2,7 @@ require 'minitest/autorun'
 require 'csv'
 
 class BattingFile
-  attr_accessor :data, :rows, :players
+  attr_accessor :data, :rows, :players, :years
 
   def initialize(file=nil)
     @data = IO.read(file) if file
@@ -21,10 +21,20 @@ class BattingFile
   end
 
   def load_players
-    @players ||= parse.inject({}) do |all,year|
-      id = year['playerID']
-      all.merge id => all.fetch(id, Player.new(id)).tap{|p| p.add_year(year) }
+    @years = YearCollection.new parse.map do |year|
+      Year.new(year)
     end
+  end
+end
+
+class YearCollection
+  attr_accessor :years
+  def initialize(years)
+    @years = years
+  end
+
+  def count
+    years.count
   end
 end
 
@@ -106,8 +116,18 @@ class Stats
     end.first
   end
 
-  def slugging_percentages_by_team_and_year(team,year)
+  def limit_by_team(years, team)
+    years.select{|year| year.team == team }
+  end
 
+  def limit_by_year(years, year)
+    years.select{|y| y.year == year }
+  end
+
+  def slugging_percentages_by_team_and_year(team,year)
+    players.map{|id,player|
+      player.years.fetch(year, Year.new)
+    }.select{|team_year| team_year.team == team }
   end
 
   def triple_crown_winner(league,year)
@@ -161,13 +181,12 @@ describe 'Exercise' do
         batting_file.rows.count.must_equal 2, "#{batting_file.rows.count} is not 2"
       end
 
-      it 'should return 1 player class' do
-        batting_file.players.count.must_equal 1
+      it 'should return a year collection' do
+        batting_file.years.must_be_instance_of YearCollection
       end
 
-      it 'properly loads a player with > 1 year of stats' do
-        a_player = batting_file.players[player_id]
-        a_player.years.count.must_equal 2
+      it 'should have 2 years' do
+        batting_file.years.count.must_equal 2
       end
     end
   end

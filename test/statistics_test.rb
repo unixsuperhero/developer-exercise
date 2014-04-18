@@ -21,9 +21,10 @@ class BattingFile
   end
 
   def load_players
-    @players ||= parse.inject({}) do |all,player|
-      id = player['playerID']
+    @players ||= parse.inject({}) do |all,year|
+      id = year['playerID']
       player = all.fetch(id, Player.new(id))
+      player.add_year(year)
       all.merge(id => player)
     end
   end
@@ -70,6 +71,11 @@ describe BattingFile do
 
     it 'should return 1 player class' do
       batting_file.players.count.must_equal 1
+    end
+
+    it 'should be a player with 2 years of stats' do
+      player = batting_file.players['abreubo01']
+      player.years.count.must_equal 2
     end
   end
 end

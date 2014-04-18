@@ -62,7 +62,7 @@ describe BattingFile do
 
   describe 'BattingFile.load(csv_data)' do
     it 'should return a new BattingFile instance' do
-      batting_file.class.must_equal BattingFile
+      batting_file.must_be_instance_of BattingFile
     end
 
     it 'should contain an array with 2 elements' do
@@ -73,7 +73,7 @@ describe BattingFile do
       batting_file.players.count.must_equal 1
     end
 
-    it 'should be a player with 2 years of stats' do
+    it 'properly loads a player with > 1 year of stats' do
       player = batting_file.players['abreubo01']
       player.years.count.must_equal 2
     end

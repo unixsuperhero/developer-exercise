@@ -226,7 +226,10 @@ describe 'Exercise' do
       end
 
       it 'should be false if any are below the threshold' do
-
+        Stats.new({}).years_meet_ab_requirement?([
+            Year.new('AB' => 10),
+            Year.new('AB' => 9)
+          ], 10).must_equal false
       end
     end
     describe '#eligible_for_improved_batting_average?(player)' do

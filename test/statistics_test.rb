@@ -51,7 +51,7 @@ class YearCollection
 end
 
 class Year
-  attr_accessor :player_id, :year, :league, :team, :g, :ab, :r, :h, :doubles, :triples, :hr, :rbi, :sb, :cs
+  attr_accessor :player, :year, :league, :team, :g, :ab, :r, :h, :doubles, :triples, :hr, :rbi, :sb, :cs
 
   STATS = [ 'yearID', 'G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'SB', 'CS' ]
 
@@ -64,7 +64,7 @@ class Year
 
   def stat_map
     {
-      'playerID' => :@player_id,
+      'playerID' => :@player,
       'yearID'   => :@year,
       'league'   => :@league,
       'teamID'   => :@team,
@@ -183,7 +183,7 @@ describe 'Exercise' do
 
   describe Year do
     it 'should properly load all stats' do
-      year.player_id.must_equal player_id
+      year.player.must_equal player_id
       year.hr.must_equal 20
     end
 
@@ -243,7 +243,7 @@ describe 'Exercise' do
 
     describe '#by_team' do
       it 'should return a new YearCollection' do
-        YearCollection.new(year_set).by_team(2001).must_be_instance_of YearCollection
+        YearCollection.new(year_set).by_team('OAK').must_be_instance_of YearCollection
       end
 
       it 'should return a subset of the original collection' do
@@ -251,13 +251,14 @@ describe 'Exercise' do
       end
     end
 
-    describe '#by_year' do
+    describe '#by_player' do
       it 'should return a new YearCollection' do
-        YearCollection.new(year_set).by_year(2001).must_be_instance_of YearCollection
+        YearCollection.new(year_set).by_player('one').must_be_instance_of YearCollection
       end
 
       it 'should return a subset of the original collection' do
-        YearCollection.new(year_set).by_year(2001).count.must_equal 2
+        YearCollection.new(year_set).by_player('one').count.must_equal 3
+
       end
     end
   end

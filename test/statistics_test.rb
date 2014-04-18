@@ -96,7 +96,6 @@ class Stats
 
   def most_improved_batting_average(from_year,to_year)
     players.inject([nil,0]) do |(top_player,delta),(id,player)|
-      puts player
       next [top_player,delta] unless years_meet_ab_requirement?([
           first_year = player.years.fetch(from_year, Year.new),
           second_year = player.years.fetch(to_year, Year.new),

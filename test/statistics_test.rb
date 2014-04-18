@@ -48,23 +48,22 @@ abreubo01,2009,AL,LAA,152,563,96,165,29,3,15,103,30,8
 CSV_DATA
 
 describe BattingFile do
+  let(:batting_file) { BattingFile.load(SAMPLE_DATA) }
   it 'should have a BattingFile class' do
     assert BattingFile.is_a? Class
   end
 
   describe 'BattingFile.load(csv_data)' do
     it 'should return a new BattingFile instance' do
-      assert BattingFile.load(SAMPLE_DATA).class == BattingFile
+      assert batting_file.class == BattingFile
     end
 
     it 'should contain an array with 2 elements' do
-      row_count = BattingFile.load(SAMPLE_DATA).rows.count
-      assert row_count == 2, "#{row_count} is not 2"
+      assert batting_file.rows.count == 2, "#{batting_file.rows.count} is not 2"
     end
 
     it 'should return 1 player class' do
-      file = BattingFile.load(SAMPLE_DATA)
-      assert file.players.count == 1
+      assert batting_file.players.count == 1
     end
   end
 end

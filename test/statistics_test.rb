@@ -232,24 +232,6 @@ describe 'Exercise' do
           ], 10).must_equal false
       end
     end
-    describe '#eligible_for_improved_batting_average?(player)' do
-      it 'should be true if both at_bats >= 200' do
-        Stats.new({
-          'one' => Player.new('one', {
-            '2000' => Year.new('AB' => '200'),
-            '2001' => Year.new('AB' => '300')
-          })
-        }).eligible_for_improved_batting_average?('one', '2000', '2001').must_equal true
-      end
-      it 'should be false if either at_bats < 200' do
-        Stats.new({
-          'one' => Player.new('one', {
-            '2000' => Year.new('AB' => '199'),
-            '2001' => Year.new('AB' => '300')
-          })
-        }).eligible_for_improved_batting_average?('one', '2000', '2001').must_equal false
-      end
-    end
     describe '#most_improved_batting_average(from_year,to_year)' do
       it 'should skip players with < 200 at_bats'
       it 'should find the delta between the to/from_year batting averages'

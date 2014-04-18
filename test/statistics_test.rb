@@ -323,13 +323,17 @@ describe 'Exercise' do
     end
   end
 
+  let(:top_players_set) {[
+      Year.new('playerID' => 'home_runs_player', 'H' => 10, 'AB' => 100, 'HR' => 30, 'RBI' => 10),
+      Year.new('playerID' => 'batting_average_player', 'H' => 80, 'AB' => 100, 'HR' => 10, 'RBI' => 20),
+      Year.new('playerID' => 'rbis_player', 'H' => 20, 'AB' => 100, 'HR' => 20, 'RBI' => 30),
+  ]}
+  let(:top_players_collection) { YearCollection.new(top_players_set) }
+  let(:top_player_stats) { Stats.new(top_players_collection) }
+
   describe '#highest_batting_average' do
     it 'should return the player_id with the highest batting average' do
-      Stats.new(YearCollection.new([
-        Year.new('playerID' => 'lowest_average', 'H' => 10, 'AB' => 100),
-        Year.new('playerID' => 'highest_average', 'H' => 80, 'AB' => 100),
-        Year.new('playerID' => 'middle_average', 'H' => 20, 'AB' => 100),
-      ])).highest_batting_average.must_equal 'highest_average'
+      top_player_stats.highest_batting_average.must_equal 'batting_average_player'
     end
   end
 

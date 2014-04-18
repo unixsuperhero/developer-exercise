@@ -35,31 +35,31 @@ class YearCollection
   end
 
   def each(&block)
-    @members.each{|member| block.call(member) }
+    members.each{|member| block.call(member) }
   end
 
-  def years
-    @members
+  def to_a
+    members
   end
 
   def count
-    years.count
+    members.count
   end
 
   def by_year(year)
-    YearCollection.new years.select{|y| y.year == year }
+    YearCollection.new members.select{|y| y.year == year }
   end
 
   def by_team(team)
-    YearCollection.new years.select{|y| y.team == team }
+    YearCollection.new members.select{|y| y.team == team }
   end
 
   def by_player(player)
-    YearCollection.new years.select{|y| y.player == player }
+    YearCollection.new members.select{|y| y.player == player }
   end
 
   def by_minimum_at_bats(at_bats)
-    YearCollection.new years.select{|y| y.ab >= at_bats }
+    YearCollection.new members.select{|y| y.ab >= at_bats }
   end
 end
 
@@ -256,7 +256,7 @@ describe 'Exercise' do
       end
 
       it 'should return the expected years' do
-        YearCollection.new(year_set).by_minimum_at_bats(180).years.must_equal [oak_2000, flo_2002]
+        YearCollection.new(year_set).by_minimum_at_bats(180).to_a.must_equal [oak_2000, flo_2002]
       end
     end
 
@@ -291,7 +291,7 @@ describe 'Exercise' do
     end
 
     it 'expects the proper results when chaining methods' do
-      YearCollection.new(year_set).by_year(2000).by_team('OAK').years.must_equal [oak_2000]
+      YearCollection.new(year_set).by_year(2000).by_team('OAK').to_a.must_equal [oak_2000]
     end
 
     it 'should allow the by_* methods to be chainable' do

@@ -191,19 +191,6 @@ describe 'Exercise' do
     end
   end
 
-  describe Player do
-    describe '#add_year' do
-      it 'should have 0 starting years' do
-        player.years.count.must_equal 0
-      end
-
-      it 'year could should increase by 1' do
-        player.add_year year_row
-        player.years.count.must_equal 1
-      end
-    end
-  end
-
   describe Year do
     it 'should properly load all stats' do
       year.player_id.must_equal player_id

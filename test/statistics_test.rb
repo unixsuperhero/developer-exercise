@@ -2,7 +2,7 @@ require 'minitest/autorun'
 require 'csv'
 
 class BattingFile
-  attr_accessor :data, :rows
+  attr_accessor :data, :rows, :players
 
   def initialize(file=nil)
     @data = IO.read(file) if file
@@ -12,11 +12,20 @@ class BattingFile
     batting_file = new.tap{|file|
       file.data = data
       file.parse
+      file.load_players
     }
   end
 
   def parse
     @rows ||= CSV.parse(data, headers: true)
+  end
+
+  def load_players
+    parse.inject({}) do |all,player|
+      id = player['playerID']
+      player = all.fetch(id, Player.new(id))
+      all.merge(id => player)
+    end
   end
 end
 
@@ -48,10 +57,12 @@ describe BattingFile do
       assert BattingFile.load(SAMPLE_DATA).class == BattingFile
     end
 
-    it 'should contain 2 CSV Rows' do
+    it 'should contain an array with 2 elements' do
       row_count = BattingFile.load(SAMPLE_DATA).rows.count
       assert row_count == 2, "#{row_count} is not 2"
     end
+
+    it 'should return 1 player class'
   end
 end
 

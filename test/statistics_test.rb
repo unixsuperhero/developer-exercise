@@ -20,7 +20,9 @@ describe BattingFile do
   it 'should have a BattingFile class' do
     BattingFile.is_a? Class
   end
+end
 
+describe Year do
   describe '#batting_average' do
     it 'calculates the proper batting average'
     it 'returns a float'

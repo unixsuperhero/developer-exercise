@@ -21,7 +21,7 @@ class BattingFile
   end
 
   def load_players
-    parse.inject({}) do |all,player|
+    @players ||= parse.inject({}) do |all,player|
       id = player['playerID']
       player = all.fetch(id, Player.new(id))
       all.merge(id => player)
@@ -62,7 +62,10 @@ describe BattingFile do
       assert row_count == 2, "#{row_count} is not 2"
     end
 
-    it 'should return 1 player class'
+    it 'should return 1 player class' do
+      file = BattingFile.load(SAMPLE_DATA)
+      assert file.players.count == 1
+    end
   end
 end
 

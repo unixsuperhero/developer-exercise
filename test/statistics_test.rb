@@ -35,6 +35,10 @@ class Player
     @id = id
     @years = years
   end
+
+  def add_year(stats)
+    years << Year.new(stats)
+  end
 end
 
 class Year
@@ -72,8 +76,18 @@ end
 
 describe Player do
   let(:player) { Player.new('john doe') }
-  describe '#add_year' do
+  let(:batting_file) { BattingFile.load(SAMPLE_DATA) }
+  let(:year) { batting_file.rows.first }
 
+  describe '#add_year' do
+    it 'should have 0 starting years' do
+      player.years.count.must_equal 0
+    end
+
+    it 'year could should increase by 1' do
+      player.add_year year
+      player.years.count.must_equal 1
+    end
   end
 end
 

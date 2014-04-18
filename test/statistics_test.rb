@@ -112,13 +112,19 @@ class Stats
   def most_improved_batting_average(from_year,to_year)
     player = nil
     from_set = years.by_minimum_at_bats(200).by_year(from_year)
-    years.by_minimum_at_bats(200).by_year(  to_year).inject(0) do |del,year|
-      next del unless from_set.by_player(year.player).any?
-      next del if del >= year.batting_average - from_set.by_player(year.player).first.batting_average
-      player = year.player
-      del = year.batting_average - from_set.by_player(year.player).first.batting_average
-    end
-    player
+    stop_set = years.by_minimum_at_bats(200).by_year(  to_year)
+    from_set.inject({}){|hash,year|
+      next hash unless stop_set.map(&:player).include?(y.player)
+      from_player = from_set.by_player(y.player).first
+      hash.merge( y.player => y.batting_average - from_player.batting_average )
+    }.max
+    #years.by_minimum_at_bats(200).by_year(to_year).inject(0) do |del,year|
+    #  next del unless from_set.by_player(year.player).any?
+    #  next del if del >= year.batting_average - from_set.by_player(year.player).first.batting_average
+    #  player = year.player
+    #  del = year.batting_average - from_set.by_player(year.player).first.batting_average
+    #end
+    #player
   end
 
   def slugging_percentages_by_team_and_year(team,year)
@@ -128,10 +134,15 @@ class Stats
   end
 
   def triple_crown_winner(league,year)
-
+    set = years.by_league(league).by_year(year).by_minimum_at_bats(400)
+    avg = set.max{|y| y.batting_average }.player
+    hrs = set.max{|y| y.hr }.player
+    rbi = set.max{|y| y.rbi }.player
+    avg == hrs && hrs == rbi && avg || '(No winner)'
   end
 
 end
+
 
 SAMPLE_DATA = <<CSV_DATA
 playerID,yearID,league,teamID,G,AB,R,H,2B,3B,HR,RBI,SB,CS

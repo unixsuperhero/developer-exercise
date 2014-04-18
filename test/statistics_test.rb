@@ -249,8 +249,19 @@ describe 'Exercise' do
           })
         }).most_improved_batting_average(2000, 2001).must_equal 'one'
       end
-      it 'should find the delta between the to/from_year batting averages'
-      it 'should return the name with the highest delta'
+
+      it 'should return the name with the highest delta' do
+        Stats.new({
+          'one' => Player.new('one', {
+            2000 => Year.new('H' => 50, 'AB' => 200),
+            2001 => Year.new('H' => 100, 'AB' => 200)
+          }),
+          'two' => Player.new('two', {
+            2000 => Year.new('H' => 1, 'AB' => 200),
+            2001 => Year.new('H' => 200, 'AB' => 200)
+          })
+        }).most_improved_batting_average(2000, 2001).must_equal 'two'
+      end
     end
 
     describe '#slugging_percentages_by_team_and_year(team,year)' do

@@ -159,8 +159,7 @@ describe 'Exercise' do
     end
 
     it 'should set values to 0 if stats are nil' do
-      this_year = Year.new
-      this_year.ab.must_equal 0
+      Year.new.ab.must_equal 0
     end
 
     describe '#batting_average' do

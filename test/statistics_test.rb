@@ -2,14 +2,14 @@ require 'minitest/autorun'
 require 'csv'
 
 class BattingFile
-  attr_accessor :data, :rows, :players, :years
+  attr_accessor :data, :years
 
   def initialize(file=nil)
     @data = File.read(file) if file
   end
 
   def self.load(data)
-    batting_file = new.tap{|file|
+    new.tap{|file|
       file.data = data
       file.read
     }
@@ -59,10 +59,14 @@ class Year
   STATS = [ 'yearID', 'G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'SB', 'CS' ]
 
   def initialize(stats={})
-    stat_map.each{|header,var_name|
-      stats[header] = stats[header].to_i if STATS.include?(header)
-      instance_variable_set(var_name, stats[header])
-    }
+    stat_map.each do |header,var_name|
+      instance_variable_set var_name,
+                            is_numeric?(header) ? stats[header].to_i : stats[header]
+    end
+  end
+
+  def is_numeric?(name)
+    STATS.include? name
   end
 
   def stat_map
@@ -119,24 +123,25 @@ class Stats
     end
   end
 
-  def highest_batting_average(set)
-    set.max_by{|player| player.batting_average }.player
+  def highest_batting_average
+    years.max_by{|player| player.batting_average }.player
   end
 
-  def most_home_runs(set)
-    set.max_by{|player| player.hr }.player
+  def most_home_runs
+    years.max_by{|player| player.hr }.player
   end
 
-  def most_rbis(set)
-    set.max_by{|player| player.rbi }.player
+  def most_rbis
+    years.max_by{|player| player.rbi }.player
   end
 
   def triple_crown_winner(league,year)
-    set = years.by_league(league).by_year(year).by_minimum_at_bats(400)
-    avg = set.max_by{|y| y.batting_average }.player
-    hrs = set.max_by{|y| y.hr }.player
-    rbi = set.max_by{|y| y.rbi }.player
-    avg == hrs && hrs == rbi && avg || '(No winner)'
+    @years = years.by_league(league).by_year(year).by_minimum_at_bats(400)
+    highest_batting_average == most_home_runs && most_home_runs == most_rbis && most_rbis || '(No winner)'
+    # avg = set.max_by{|y| y.batting_average }.player
+    # hrs = set.max_by{|y| y.hr }.player
+    # rbi = set.max_by{|y| y.rbi }.player
+    # avg == hrs && hrs == rbi && avg || '(No winner)'
   end
 end
 
@@ -316,6 +321,24 @@ describe 'Exercise' do
     it 'should allow the by_* methods to be chainable' do
       YearCollection.new(year_set).by_year(2000).by_team('OAK').count.must_equal 1
     end
+  end
+
+  describe '#highest_batting_average' do
+    it 'should return the player_id with the highest batting average' do
+      Stats.new(YearCollection.new([
+        Year.new('playerID' => 'lowest_average', 'H' => 10, 'AB' => 100),
+        Year.new('playerID' => 'highest_average', 'H' => 80, 'AB' => 100),
+        Year.new('playerID' => 'middle_average', 'H' => 20, 'AB' => 100),
+      ])).highest_batting_average.must_equal 'highest_average'
+    end
+  end
+
+  describe '#most_rbis' do
+    it 'should return the player_id with the highest rbis'
+  end
+
+  describe '#most_home_runs' do
+    it 'should return the player_id with the highest home runs'
   end
 end
 

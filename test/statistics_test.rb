@@ -56,6 +56,7 @@ CSV_DATA
 
 describe BattingFile do
   let(:batting_file) { BattingFile.load(SAMPLE_DATA) }
+  let(:player_id) { 'abreubo01' }
   it 'should have a BattingFile class' do
     BattingFile.must_be_instance_of Class
   end
@@ -74,14 +75,15 @@ describe BattingFile do
     end
 
     it 'properly loads a player with > 1 year of stats' do
-      player = batting_file.players['abreubo01']
+      player = batting_file.players[player_id]
       player.years.count.must_equal 2
     end
   end
 end
 
 describe Player do
-  let(:player) { Player.new('john doe') }
+  let(:player_id) { 'abreubo01' }
+  let(:player) { Player.new(player_id) }
   let(:batting_file) { BattingFile.load(SAMPLE_DATA) }
   let(:year) { batting_file.rows.first }
 
@@ -98,6 +100,11 @@ describe Player do
 end
 
 describe Year do
+  let(:batting_file) { BattingFile.load(SAMPLE_DATA) }
+  let(:player_id) { 'abreubo01' }
+  it 'should properly load all stats' do
+
+  end
   describe '#batting_average' do
     it 'calculates the proper batting average'
     it 'returns a float'

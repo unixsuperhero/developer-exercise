@@ -344,7 +344,13 @@ describe 'Exercise' do
   end
 
   describe '#most_home_runs' do
-    it 'should return the player_id with the highest home runs'
+    it 'should return the player_id with the highest home runs' do
+      Stats.new(YearCollection.new([
+        Year.new('playerID' => 'lowest_home_runs', 'HR' => 90),
+        Year.new('playerID' => 'highest_home_runs', 'HR' => 140),
+        Year.new('playerID' => 'middle_home_runs', 'HR' => 110),
+      ])).most_home_runs.must_equal 'highest_home_runs'
+    end
   end
 end
 

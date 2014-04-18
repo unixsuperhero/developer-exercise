@@ -65,7 +65,7 @@ describe BattingFile do
     end
 
     it 'should return 1 player class' do
-      assert batting_file.players.count == 1
+      batting_file.players.count.must_equal 1
     end
   end
 end

@@ -73,7 +73,13 @@ class Year
   end
 
   def batting_average
-    sprintf("%0.4f", h.to_f / ab.to_f).to_f
+    sprintf("%0.4f", h / ab.to_f).to_f
+  end
+
+  def slugging_percentage
+    hits = h - (doubles + triples + hr)
+    score = hits + (doubles * 2) + (triples * 3) + (hr * 4)
+    sprintf('%0.4f', score / ab.to_f).to_f
   end
 end
 
@@ -169,6 +175,19 @@ SAMPLE
 
       it 'returns a float' do
         year.batting_average.must_be_instance_of Float
+      end
+    end
+
+    describe '#slugging_percentage' do
+      it 'should give scores to each type of hit and divide by total at_bats' do
+        this_year = Year.new 'playerID' => player_id,
+                             'AB' => 100,
+                             'H'  =>  20, # 20 -      9  => 11
+                             '2B' =>   2, # 11 + (2 * 2) => 15
+                             '3B' =>   3, # 15 + (3 * 3) => 24
+                             'HR' =>   4  # 24 + (4 * 4) => 40
+
+        this_year.slugging_percentage.must_equal (40.to_f / 100.to_f)
       end
     end
   end

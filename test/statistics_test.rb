@@ -38,9 +38,9 @@ class YearCollection
     members.each{|member| block.call(member) }
   end
 
-  def to_a
-    members
-  end
+  #def to_a
+  #  members
+  #end
 
   def count
     members.count

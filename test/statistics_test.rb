@@ -217,9 +217,24 @@ describe 'Exercise' do
   end
 
   describe YearCollection do
+    let(:year_set) {[
+        Year.new('playerID' => 'one', 'yearID' => 2000, 'teamID' => 'OAK'),
+        Year.new('playerID' => 'one', 'yearID' => 2001, 'teamID' => 'OAK'),
+        Year.new('playerID' => 'one', 'yearID' => 2002, 'teamID' => 'OAK'),
+        Year.new('playerID' => 'two', 'yearID' => 2000, 'teamID' => 'FLO'),
+        Year.new('playerID' => 'two', 'yearID' => 2001, 'teamID' => 'FLO'),
+        Year.new('playerID' => 'two', 'yearID' => 2002, 'teamID' => 'FLO'),
+    ]}
     describe '#count' do
       it 'should return the size of @years' do
-        YearCollection.new([1,2,3]).count.must_equal 3
+        YearCollection.new(year_set).count.must_equal 6
+      end
+    end
+
+    describe '#by_year' do
+      it 'should return a new YearCollection'
+      it 'should return a subset of the original collection' do
+        YearCollection.new(year_set).by_year(2001).count.must_equal 2
       end
     end
   end

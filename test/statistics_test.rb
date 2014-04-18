@@ -28,9 +28,18 @@ class BattingFile
 end
 
 class YearCollection
-  attr_accessor :years
+  include Enumerable
+  attr_accessor :members
   def initialize(years)
-    @years = years
+    @members = years
+  end
+
+  def each(&block)
+    @members.each{|member| block.call(member) }
+  end
+
+  def years
+    @members
   end
 
   def count

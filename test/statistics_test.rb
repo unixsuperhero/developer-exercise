@@ -135,6 +135,15 @@ describe 'Exercise' do
       year.hr.must_equal 20
     end
 
+    it 'should set values to 0 if stats are nil' do
+      sample_data = <<-SAMPLE
+playerID,yearID,league,teamID,G,AB,R,H,2B,3B,HR,RBI,SB,CS
+aardsda01,2012,AL,NYA,1,,,,,,,,,
+        SAMPLE
+      this_year = Year.new BattingFile.load(sample_data).rows.first
+      this_year.ab.must_equal 0
+    end
+
     describe '#batting_average' do
       it 'calculates the proper batting average' do
         year.batting_average.must_equal 0.2548

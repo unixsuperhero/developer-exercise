@@ -1,4 +1,5 @@
 require 'minitest/autorun'
+require 'pp'
 require 'csv'
 
 class BattingFile
@@ -139,19 +140,24 @@ class Stats
   end
 
   def triple_crown_winner(league,year)
-    @years = years.by_league(league).by_year(year).by_minimum_at_bats(400)
-    highest_batting_average == most_home_runs && most_home_runs == most_rbis && most_rbis || '(No winner)'
+    stats = Stats.new(years.by_league(league).by_year(year).by_minimum_at_bats(400))
+    puts stats.years.count
+    stats.highest_batting_average == stats.most_home_runs && stats.most_home_runs == stats.most_rbis && stats.most_rbis || '(No winner)'
   end
 end
 
-# years = BattingFile.new('./public/batting.csv').read
-# stats = Stats.new(years)
-# puts stats.most_improved_batting_average(2009,2010)
-# puts stats.slugging_percentages_by_team_and_year('OAK',2007)
-# puts stats.triple_crown_winner('AL', 2011)
-# puts stats.triple_crown_winner('AL', 2012)
-# puts stats.triple_crown_winner('NL', 2011)
-# puts stats.triple_crown_winner('NL', 2012)
+years = BattingFile.new('./public/batting.csv').read
+stats = Stats.new(years)
+pp({
+  most_improved_batting_average: stats.most_improved_batting_average(2009,2010),
+  OAK_slugging_percentages: stats.slugging_percentages_by_team_and_year('OAK',2007),
+  al_2011_triple_crown: stats.triple_crown_winner('AL', 2011),
+  al_2012_triple_crown: stats.triple_crown_winner('AL', 2012),
+  nl_2011_triple_crown: stats.triple_crown_winner('NL', 2011),
+  nl_2012_triple_crown: stats.triple_crown_winner('NL', 2012),
+})
+
+__END__
 
 SAMPLE_DATA = <<CSV_DATA
 playerID,yearID,league,teamID,G,AB,R,H,2B,3B,HR,RBI,SB,CS

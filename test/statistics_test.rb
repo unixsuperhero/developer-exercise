@@ -5,26 +5,18 @@ class BattingFile
   attr_accessor :data, :rows, :players, :years
 
   def initialize(file=nil)
-    @data = IO.read(file) if file
+    @data = File.read(file) if file
   end
 
   def self.load(data)
     batting_file = new.tap{|file|
       file.data = data
-      file.parse
-      file.load_years
+      file.read
     }
   end
 
-  def parse
-    @rows ||= CSV.parse(@data, headers: true)
-  end
-
-  def load_years
-    @years = YearCollection.new parse.map do |year|
-      puts "year => #{year}"
-      break Year.new(year)
-    end
+  def read
+    @years ||= YearCollection.new CSV.parse(@data, headers: true).map{|year| Year.new(year) }
   end
 end
 
@@ -114,18 +106,11 @@ class Stats
     player = nil
     from_set = years.by_minimum_at_bats(200).by_year(from_year)
     stop_set = years.by_minimum_at_bats(200).by_year(  to_year)
-    from_set.inject({}){|hash,year|
+    from_set.inject({}){|hash,y|
       next hash unless stop_set.map(&:player).include?(y.player)
       from_player = from_set.by_player(y.player).first
       hash.merge( y.player => y.batting_average - from_player.batting_average )
-    }.max
-    #years.by_minimum_at_bats(200).by_year(to_year).inject(0) do |del,year|
-    #  next del unless from_set.by_player(year.player).any?
-    #  next del if del >= year.batting_average - from_set.by_player(year.player).first.batting_average
-    #  player = year.player
-    #  del = year.batting_average - from_set.by_player(year.player).first.batting_average
-    #end
-    #player
+    }.max{|(k,v),(kk,vv)| v <=> vv }.first
   end
 
   def slugging_percentages_by_team_and_year(team,year)
@@ -134,21 +119,36 @@ class Stats
     end
   end
 
+  def highest_batting_average(set)
+    set.max_by{|player| player.batting_average }.player
+  end
+
+  def most_home_runs(set)
+    set.max_by{|player| player.hr }.player
+  end
+
+  def most_rbis(set)
+    set.max_by{|player| player.rbi }.player
+  end
+
   def triple_crown_winner(league,year)
     set = years.by_league(league).by_year(year).by_minimum_at_bats(400)
-    avg = set.max{|y| y.batting_average }.player
-    hrs = set.max{|y| y.hr }.player
-    rbi = set.max{|y| y.rbi }.player
+    avg = set.max_by{|y| y.batting_average }.player
+    hrs = set.max_by{|y| y.hr }.player
+    rbi = set.max_by{|y| y.rbi }.player
     avg == hrs && hrs == rbi && avg || '(No winner)'
   end
 end
 
-years = BattingFile.new('./public/batting.csv').load_years
-puts years.to_a.first.class
-#puts years.to_a.first.map{|k,v| puts "#{k} => #{v}" }
-#puts Stats.new(years).most_improved_batting_average(2009,2010)
+# years = BattingFile.new('./public/batting.csv').read
+# stats = Stats.new(years)
+# puts stats.most_improved_batting_average(2009,2010)
+# puts stats.slugging_percentages_by_team_and_year('OAK',2007)
+# puts stats.triple_crown_winner('AL', 2011)
+# puts stats.triple_crown_winner('AL', 2012)
+# puts stats.triple_crown_winner('NL', 2011)
+# puts stats.triple_crown_winner('NL', 2012)
 
-__END__
 SAMPLE_DATA = <<CSV_DATA
 playerID,yearID,league,teamID,G,AB,R,H,2B,3B,HR,RBI,SB,CS
 abreubo01,2010,AL,LAA,154,573,88,146,41,1,20,78,24,10
@@ -156,8 +156,8 @@ abreubo01,2009,AL,LAA,152,563,96,165,29,3,15,103,30,8
 CSV_DATA
 
 describe 'Exercise' do
-  let(:batting_file) {BattingFile.load(SAMPLE_DATA) }
-  let(:player_id) { 'areubo01' }
+  let(:batting_file) { BattingFile.load(SAMPLE_DATA) }
+  let(:player_id) { 'abreubo01' }
   let(:year_row) {{
     'playerID' => player_id,
     'yearID' => '2009',
@@ -190,7 +190,7 @@ describe 'Exercise' do
       end
 
       it 'should contain an array with 2 elements' do
-        batting_file.rows.count.must_equal 2, "#{batting_file.rows.count} is not 2"
+        batting_file.years.count.must_equal 2, "#{batting_file.years.count} is not 2"
       end
 
       it 'should return a year collection' do

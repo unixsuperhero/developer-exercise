@@ -46,7 +46,7 @@ class Year
 
   STATS = [ 'G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'SB', 'CS' ]
 
-  def initialize(stats)
+  def initialize(stats={})
     stat_map.each{|header,var_name|
       stats[header] = stats[header].to_i if STATS.include?(header)
       instance_variable_set(var_name, stats[header])
@@ -159,7 +159,7 @@ describe 'Exercise' do
     end
 
     it 'should set values to 0 if stats are nil' do
-      this_year = Year.new({})
+      this_year = Year.new
       this_year.ab.must_equal 0
     end
 

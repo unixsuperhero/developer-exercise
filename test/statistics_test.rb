@@ -36,6 +36,18 @@ class YearCollection
   def count
     years.count
   end
+
+  def by_year(year)
+    YearCollection.new years.select{|y| y.year == year }
+  end
+
+  def by_team(team)
+    YearCollection.new years.select{|y| y.team == team }
+  end
+
+  def by_player(player)
+    YearCollection.new years.select{|y| y.player == player }
+  end
 end
 
 class Year
@@ -200,6 +212,14 @@ describe 'Exercise' do
                              'HR' =>   4  # 24 + (4 * 4) => 40
 
         this_year.slugging_percentage.must_equal (40 / 100.to_f) # => 0.4
+      end
+    end
+  end
+
+  describe YearCollection do
+    describe '#count' do
+      it 'should return the size of @years' do
+        YearCollection.new([1,2,3]).count.must_equal 3
       end
     end
   end

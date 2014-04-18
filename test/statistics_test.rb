@@ -43,8 +43,28 @@ class Player
 end
 
 class Year
+  attr_accessor :player_id, :year, :league, :team, :g, :ab, :r, :h, :doubles, :triples, :hr, :rbi, :sb, :cs
   def initialize(stats)
+    stat_map.each{|header,var_name| instance_variable_set(var_name, stats[header]) }
+  end
 
+  def stat_map
+    {
+      'playerID' => :@player_id,
+      'yearID'   => :@year,
+      'league'   => :@league,
+      'teamID'   => :@team,
+      'G'        => :@g,
+      'AB'       => :@ab,
+      'R'        => :@r,
+      'H'        => :@h,
+      '2B'       => :@doubles,
+      '3B'       => :@triples,
+      'HR'       => :@hr,
+      'RBI'      => :@rbi,
+      'SB'       => :@sb,
+      'CS'       => :@cs,
+    }
   end
 end
 
@@ -58,7 +78,8 @@ describe 'Exercise' do
   let(:batting_file) { BattingFile.load(SAMPLE_DATA) }
   let(:player_id) { 'abreubo01' }
   let(:player) { Player.new(player_id) }
-  let(:year) { batting_file.rows.first }
+  let(:year_row) { batting_file.rows.first }
+  let(:year) { Year.new(year_row) }
 
   describe BattingFile do
     it 'should have a BattingFile class' do
@@ -92,7 +113,7 @@ describe 'Exercise' do
       end
 
       it 'year could should increase by 1' do
-        player.add_year year
+        player.add_year year_row
         player.years.count.must_equal 1
       end
     end
@@ -100,8 +121,9 @@ describe 'Exercise' do
 
   describe Year do
     it 'should properly load all stats' do
-
+      year.player_id.must_equal player_id
     end
+
     describe '#batting_average' do
       it 'calculates the proper batting average'
       it 'returns a float'

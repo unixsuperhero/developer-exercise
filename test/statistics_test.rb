@@ -44,7 +44,7 @@ end
 class Year
   attr_accessor :player_id, :year, :league, :team, :g, :ab, :r, :h, :doubles, :triples, :hr, :rbi, :sb, :cs
 
-  STATS = [ 'G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'SB', 'CS' ]
+  STATS = [ 'yearID', 'G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'SB', 'CS' ]
 
   def initialize(stats={})
     stat_map.each{|header,var_name|
@@ -94,12 +94,17 @@ class Stats
     years.all?{|y| y.ab >= at_bats }
   end
 
-  def eligible_for_improved_batting_average?(player, from_year, to_year)
-    (p = players[player]) && [p.years[from_year], p.years[to_year]].map(&:ab).all?{|ab| ab >= 200 }
-  end
-
   def most_improved_batting_average(from_year,to_year)
-
+    players.inject([nil,0]) do |(top_player,delta),(id,player)|
+      puts player
+      next [top_player,delta] unless years_meet_ab_requirement?([
+          first_year = player.years.fetch(from_year, Year.new),
+          second_year = player.years.fetch(to_year, Year.new),
+        ], 200)
+      current_delta = second_year.batting_average - first_year.batting_average
+      top_player,delta = id,current_delta if delta < current_delta
+      [top_player,delta]
+    end.first
   end
 
   def slugging_percentages_by_team_and_year(team,year)
@@ -233,7 +238,18 @@ describe 'Exercise' do
       end
     end
     describe '#most_improved_batting_average(from_year,to_year)' do
-      it 'should skip players with < 200 at_bats'
+      it 'should skip players with < 200 at_bats' do
+        Stats.new({
+          'one' => Player.new('one', {
+            2000 => Year.new('H' => 50, 'AB' => 200),
+            2001 => Year.new('H' => 100, 'AB' => 200)
+          }),
+          'two' => Player.new('two', {
+            2000 => Year.new('H' => 1, 'AB' => 199),
+            2001 => Year.new('H' => 200, 'AB' => 200)
+          })
+        }).most_improved_batting_average(2000, 2001).must_equal 'one'
+      end
       it 'should find the delta between the to/from_year batting averages'
       it 'should return the name with the highest delta'
     end

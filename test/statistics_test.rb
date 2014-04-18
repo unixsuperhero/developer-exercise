@@ -83,6 +83,10 @@ class Year
   end
 end
 
+class Stats
+
+end
+
 SAMPLE_DATA = <<CSV_DATA
 playerID,yearID,league,teamID,G,AB,R,H,2B,3B,HR,RBI,SB,CS
 abreubo01,2010,AL,LAA,154,573,88,146,41,1,20,78,24,10
@@ -182,8 +186,26 @@ describe 'Exercise' do
                              '3B' =>   3, # 15 + (3 * 3) => 24
                              'HR' =>   4  # 24 + (4 * 4) => 40
 
-        this_year.slugging_percentage.must_equal (40 / 100.to_f)
+        this_year.slugging_percentage.must_equal (40 / 100.to_f) # => 0.4
       end
+    end
+  end
+
+  describe Stats do
+    describe '#most_improved_batting_average(from_year,to_year)' do
+      it 'should skip players with < 200 at_bats'
+      it 'should find the delta between the to/from_year batting averages'
+      it 'should return the name with the highest delta'
+    end
+
+    describe '#slugging_percentages_by_team_and_year(team,year)' do
+      it 'should return years and percentages matching the parameters'
+    end
+
+    describe '#triple_crown_winner(league,year)' do
+      it 'should ignore players with < 400 at_bats'
+      it 'should return "(No winner)" if no player meets the criteria'
+      it 'should return the player if all 3 criteria are met'
     end
   end
 end

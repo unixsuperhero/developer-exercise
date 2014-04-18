@@ -52,12 +52,12 @@ CSV_DATA
 describe BattingFile do
   let(:batting_file) { BattingFile.load(SAMPLE_DATA) }
   it 'should have a BattingFile class' do
-    assert BattingFile.is_a? Class
+    BattingFile.must_be_instance_of Class
   end
 
   describe 'BattingFile.load(csv_data)' do
     it 'should return a new BattingFile instance' do
-      assert batting_file.class == BattingFile
+      batting_file.class.must_equal BattingFile
     end
 
     it 'should contain an array with 2 elements' do

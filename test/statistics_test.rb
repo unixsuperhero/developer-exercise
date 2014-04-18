@@ -69,6 +69,10 @@ class Year
       'CS'       => :@cs,
     }
   end
+
+  def batting_average
+    sprintf("%0.4f", h.to_f / ab.to_f).to_f
+  end
 end
 
 SAMPLE_DATA = <<CSV_DATA
@@ -129,8 +133,13 @@ describe 'Exercise' do
     end
 
     describe '#batting_average' do
-      it 'calculates the proper batting average'
-      it 'returns a float'
+      it 'calculates the proper batting average' do
+        year.batting_average.must_equal 0.2548
+      end
+
+      it 'returns a float' do
+        year.batting_average.must_be_instance_of Float
+      end
     end
   end
 end

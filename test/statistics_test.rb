@@ -38,13 +38,9 @@ class YearCollection
     members.each{|member| block.call(member) }
   end
 
-  #def to_a
-  #  members
+  #def count
+  #  members.count
   #end
-
-  def count
-    members.count
-  end
 
   def by_year(year)
     YearCollection.new members.select{|y| y.year == year }

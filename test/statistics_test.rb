@@ -334,7 +334,13 @@ describe 'Exercise' do
   end
 
   describe '#most_rbis' do
-    it 'should return the player_id with the highest rbis'
+    it 'should return the player_id with the highest rbis' do
+      Stats.new(YearCollection.new([
+        Year.new('playerID' => 'lowest_rbis', 'RBI' => 90),
+        Year.new('playerID' => 'highest_rbis', 'RBI' => 140),
+        Year.new('playerID' => 'middle_rbis', 'RBI' => 110),
+      ])).most_rbis.must_equal 'highest_rbis'
+    end
   end
 
   describe '#most_home_runs' do

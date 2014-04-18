@@ -23,8 +23,7 @@ class BattingFile
   def load_players
     @players ||= parse.inject({}) do |all,year|
       id = year['playerID']
-      player = all.fetch(id, Player.new(id))
-      player.add_year(year)
+      player = all.fetch(id, Player.new(id)).tap{|p| p.add_year(year) }
       all.merge(id => player)
     end
   end

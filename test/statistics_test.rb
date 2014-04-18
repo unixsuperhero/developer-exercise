@@ -124,6 +124,14 @@ class Stats
     end
   end
 
+  def triple_crown_winner(league,year)
+    stats = Stats.new(years.by_league(league).by_year(year).by_minimum_at_bats(400))
+    stats.highest_batting_average == stats.most_home_runs &&
+      stats.most_home_runs == stats.most_rbis &&
+      stats.most_rbis ||
+      '(No winner)'
+  end
+
   def highest_batting_average
     year = years.max_by{|player| player.batting_average }
     year &&= year.player
@@ -137,14 +145,6 @@ class Stats
   def most_rbis
     year = years.max_by{|player| player.rbi }
     year &&= year.player
-  end
-
-  def triple_crown_winner(league,year)
-    stats = Stats.new(years.by_league(league).by_year(year).by_minimum_at_bats(400))
-    stats.highest_batting_average == stats.most_home_runs &&
-      stats.most_home_runs == stats.most_rbis &&
-      stats.most_rbis ||
-      '(No winner)'
   end
 end
 

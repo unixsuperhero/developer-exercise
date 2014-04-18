@@ -32,13 +32,14 @@ end
 
 class Player
   attr_accessor :id, :years
-  def initialize(id, years=[])
+  def initialize(id, years={})
     @id = id
     @years = years
   end
 
   def add_year(stats)
-    years << Year.new(stats)
+    this_year = Year.new(stats)
+    years.merge!(this_year.year => this_year)
   end
 end
 

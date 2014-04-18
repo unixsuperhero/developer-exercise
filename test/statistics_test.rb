@@ -48,6 +48,10 @@ class YearCollection
   def by_player(player)
     YearCollection.new years.select{|y| y.player == player }
   end
+
+  def by_minimum_at_bats(at_bats)
+    YearCollection.new years.select{|y| y.ab >= at_bats }
+  end
 end
 
 class Year
@@ -217,18 +221,33 @@ describe 'Exercise' do
   end
 
   describe YearCollection do
-    let(:oak_2000) { Year.new('playerID' => 'one', 'yearID' => 2000, 'teamID' => 'OAK') }
+    let(:oak_2000) { Year.new('playerID' => 'one', 'yearID' => 2000, 'teamID' => 'OAK', 'AB' => 200) }
+    let(:flo_2002) { Year.new('playerID' => 'two', 'yearID' => 2002, 'teamID' => 'FLO', 'AB' => 180) }
     let(:year_set) {[
         oak_2000,
-        Year.new('playerID' => 'one', 'yearID' => 2001, 'teamID' => 'OAK'),
-        Year.new('playerID' => 'one', 'yearID' => 2002, 'teamID' => 'OAK'),
-        Year.new('playerID' => 'two', 'yearID' => 2000, 'teamID' => 'FLO'),
-        Year.new('playerID' => 'two', 'yearID' => 2001, 'teamID' => 'FLO'),
-        Year.new('playerID' => 'two', 'yearID' => 2002, 'teamID' => 'FLO'),
+        Year.new('playerID' => 'one', 'yearID' => 2001, 'teamID' => 'OAK', 'AB' => 150),
+        Year.new('playerID' => 'one', 'yearID' => 2002, 'teamID' => 'OAK', 'AB' => 160),
+        Year.new('playerID' => 'two', 'yearID' => 2000, 'teamID' => 'FLO', 'AB' => 140),
+        Year.new('playerID' => 'two', 'yearID' => 2001, 'teamID' => 'FLO', 'AB' => 175),
+        flo_2002,
     ]}
     describe '#count' do
       it 'should return the size of @years' do
         YearCollection.new(year_set).count.must_equal 6
+      end
+    end
+
+    describe '#by_minimum_at_bats' do
+      it 'should return a new YearCollection' do
+        YearCollection.new(year_set).by_minimum_at_bats(180).must_be_instance_of YearCollection
+      end
+
+      it 'should return a subset of the original collection' do
+        YearCollection.new(year_set).by_minimum_at_bats(180).count.must_equal 2
+      end
+
+      it 'should return the expected years' do
+        YearCollection.new(year_set).by_minimum_at_bats(180).years.must_equal [oak_2000, flo_2002]
       end
     end
 

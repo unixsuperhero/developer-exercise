@@ -30,6 +30,7 @@ end
 class YearCollection
   include Enumerable
   attr_accessor :members
+
   def initialize(years)
     @members = years
   end
@@ -40,6 +41,10 @@ class YearCollection
 
   def by_year(year)
     YearCollection.new members.select{|y| y.year == year }
+  end
+
+  def by_league(league)
+    YearCollection.new members.select{|y| y.league == league }
   end
 
   def by_team(team)
@@ -98,32 +103,28 @@ class Year
 end
 
 class Stats
-  attr_accessor :players
+  attr_accessor :years
 
-  def initialize(players)
-    @players = players
-  end
-
-  def years_meet_ab_requirement?(years, at_bats)
-    years.all?{|y| y.ab >= at_bats }
+  def initialize(years)
+    @years = years
   end
 
   def most_improved_batting_average(from_year,to_year)
-    players.inject([nil,0]) do |(top_player,delta),(id,player)|
-      next [top_player,delta] unless years_meet_ab_requirement?([
-          first_year = player.years.fetch(from_year, Year.new),
-          second_year = player.years.fetch(to_year, Year.new),
-        ], 200)
-      current_delta = second_year.batting_average - first_year.batting_average
-      top_player,delta = id,current_delta if delta < current_delta
-      [top_player,delta]
-    end.first
+    player = nil
+    from_set = years.by_minimum_at_bats(200).by_year(from_year)
+    years.by_minimum_at_bats(200).by_year(  to_year).inject(0) do |del,year|
+      next del unless from_set.by_player(year.player).any?
+      next del if del >= year.batting_average - from_set.by_player(year.player).first.batting_average
+      player = year.player
+      del = year.batting_average - from_set.by_player(year.player).first.batting_average
+    end
+    player
   end
 
   def slugging_percentages_by_team_and_year(team,year)
-    players.map{|id,player|
-      player.years.fetch(year, Year.new)
-    }.select{|team_year| team_year.team == team }
+    years.by_team(team).by_year(year).inject({}) do |hash,year|
+      hash.merge( year.player => year.slugging_percentage )
+    end
   end
 
   def triple_crown_winner(league,year)
@@ -222,14 +223,14 @@ describe 'Exercise' do
   end
 
   describe YearCollection do
-    let(:oak_2000) { Year.new('playerID' => 'one', 'yearID' => 2000, 'teamID' => 'OAK', 'AB' => 200) }
-    let(:flo_2002) { Year.new('playerID' => 'two', 'yearID' => 2002, 'teamID' => 'FLO', 'AB' => 180) }
+    let(:oak_2000) { Year.new('playerID' => 'one', 'yearID' => 2000, 'league' => 'AL', 'teamID' => 'OAK', 'AB' => 200) }
+    let(:flo_2002) { Year.new('playerID' => 'two', 'yearID' => 2002, 'league' => 'AL', 'teamID' => 'FLO', 'AB' => 180) }
     let(:year_set) {[
         oak_2000,
-        Year.new('playerID' => 'one', 'yearID' => 2001, 'teamID' => 'OAK', 'AB' => 150),
-        Year.new('playerID' => 'one', 'yearID' => 2002, 'teamID' => 'OAK', 'AB' => 160),
-        Year.new('playerID' => 'two', 'yearID' => 2000, 'teamID' => 'FLO', 'AB' => 140),
-        Year.new('playerID' => 'two', 'yearID' => 2001, 'teamID' => 'FLO', 'AB' => 175),
+        Year.new('playerID' => 'one', 'yearID' => 2001, 'league' => 'NL', 'teamID' => 'OAK', 'AB' => 150),
+        Year.new('playerID' => 'one', 'yearID' => 2002, 'league' => 'NL', 'teamID' => 'OAK', 'AB' => 160),
+        Year.new('playerID' => 'two', 'yearID' => 2000, 'league' => 'NL', 'teamID' => 'FLO', 'AB' => 140),
+        Year.new('playerID' => 'two', 'yearID' => 2001, 'league' => 'NL', 'teamID' => 'FLO', 'AB' => 175),
         flo_2002,
     ]}
     describe '#count' do
@@ -259,6 +260,16 @@ describe 'Exercise' do
 
       it 'should return a subset of the original collection' do
         YearCollection.new(year_set).by_year(2001).count.must_equal 2
+      end
+    end
+
+    describe '#by_league' do
+      it 'should return a new YearCollection' do
+        YearCollection.new(year_set).by_league('AL').must_be_instance_of YearCollection
+      end
+
+      it 'should return a subset of the original collection' do
+        YearCollection.new(year_set).by_league('AL').count.must_equal 2
       end
     end
 

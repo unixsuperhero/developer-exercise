@@ -90,6 +90,10 @@ class Stats
     @players = players
   end
 
+  def years_meet_ab_requirement?(years, at_bats)
+    years.all?{|y| y.ab >= at_bats }
+  end
+
   def eligible_for_improved_batting_average?(player, from_year, to_year)
     (p = players[player]) && [p.years[from_year], p.years[to_year]].map(&:ab).all?{|ab| ab >= 200 }
   end
@@ -213,6 +217,18 @@ describe 'Exercise' do
   end
 
   describe Stats do
+    describe '#years_meet_ab_requirement(years,at_bats)' do
+      it 'should be true if all match' do
+        Stats.new({}).years_meet_ab_requirement?([
+            Year.new('AB' => 10),
+            Year.new('AB' => 9)
+          ], 8).must_equal true
+      end
+
+      it 'should be false if any are below the threshold' do
+
+      end
+    end
     describe '#eligible_for_improved_batting_average?(player)' do
       it 'should be true if both at_bats >= 200' do
         Stats.new({

@@ -124,15 +124,18 @@ class Stats
   end
 
   def highest_batting_average
-    years.max_by{|player| player.batting_average }.player
+    year = years.max_by{|player| player.batting_average }
+    year &&= year.player
   end
 
   def most_home_runs
-    years.max_by{|player| player.hr }.player
+    year = years.max_by{|player| player.hr }
+    year &&= year.player
   end
 
   def most_rbis
-    years.max_by{|player| player.rbi }.player
+    year = years.max_by{|player| player.rbi }
+    year &&= year.player
   end
 
   def triple_crown_winner(league,year)
@@ -323,29 +326,56 @@ describe 'Exercise' do
     end
   end
 
-  let(:top_players_set) {[
-      Year.new('playerID' => 'home_runs_player', 'H' => 10, 'AB' => 100, 'HR' => 30, 'RBI' => 10),
-      Year.new('playerID' => 'batting_average_player', 'H' => 80, 'AB' => 100, 'HR' => 10, 'RBI' => 20),
-      Year.new('playerID' => 'rbis_player', 'H' => 20, 'AB' => 100, 'HR' => 20, 'RBI' => 30),
-  ]}
-  let(:top_players_collection) { YearCollection.new(top_players_set) }
-  let(:top_player_stats) { Stats.new(top_players_collection) }
+  describe '#triple_crown_winner and helpers' do
+    let(:top_players_set) {[
+        Year.new('playerID' => 'home_runs_player',        'yearID' => 2000,  'league' => 'AL',  'H' => 10,   'AB' => 400,   'HR' => 30,   'RBI' => 10),
+        Year.new('playerID' => 'batting_average_player',  'yearID' => 2000,  'league' => 'AL',  'H' => 80,   'AB' => 400,   'HR' => 10,   'RBI' => 20),
+        Year.new('playerID' => 'rbis_player',             'yearID' => 2000,  'league' => 'AL',  'H' => 20,   'AB' => 400,   'HR' => 20,   'RBI' => 30),
+    ]}
+    let(:losing_set) { top_players_set }
+    let(:winning_set) {[
+        Year.new('playerID' => 'triple_crown_player', 'yearID' => 2000,  'league' => 'AL', 'H' => 10, 'AB' => 400, 'HR' => 30, 'RBI' => 10),
+        Year.new('playerID' => 'triple_crown_player', 'yearID' => 2000,  'league' => 'AL', 'H' => 80, 'AB' => 400, 'HR' => 10, 'RBI' => 20),
+        Year.new('playerID' => 'triple_crown_player', 'yearID' => 2000,  'league' => 'AL', 'H' => 20, 'AB' => 400, 'HR' => 20, 'RBI' => 30),
+    ]}
+    let(:skipping_at_bats_set) {[
+        Year.new('playerID' => 'skip', 'yearID' => 2000,  'league' => 'AL', 'H' => 10, 'AB' => 100, 'HR' => 30, 'RBI' => 10),
+        Year.new('playerID' => 'skip', 'yearID' => 2000,  'league' => 'AL', 'H' => 80, 'AB' => 100, 'HR' => 10, 'RBI' => 20),
+        Year.new('playerID' => 'skip', 'yearID' => 2000,  'league' => 'AL', 'H' => 20, 'AB' => 100, 'HR' => 20, 'RBI' => 30),
+    ]}
+    let(:top_players_collection) { YearCollection.new(top_players_set) }
+    let(:top_player_stats) { Stats.new(top_players_collection) }
 
-  describe '#highest_batting_average' do
-    it 'should return the player_id with the highest batting average' do
-      top_player_stats.highest_batting_average.must_equal 'batting_average_player'
+    describe '#triple_crown_winner' do
+      it 'should ignore players with < 400 at_bats' do
+        Stats.new(YearCollection.new(skipping_at_bats_set)).triple_crown_winner('AL', 2000).must_equal '(No winner)'
+      end
+
+      it 'should return (No winner) if same player does not match all 3 scenarios' do
+        Stats.new(YearCollection.new(losing_set)).triple_crown_winner('AL', 2000).must_equal '(No winner)'
+      end
+
+      it 'should pick a winner if they meet all criteria' do
+        Stats.new(YearCollection.new(winning_set)).triple_crown_winner('AL', 2000).must_equal 'triple_crown_player'
+      end
     end
-  end
 
-  describe '#most_rbis' do
-    it 'should return the player_id with the highest rbis' do
-      top_player_stats.most_rbis.must_equal 'rbis_player'
+    describe '#highest_batting_average' do
+      it 'should return the player_id with the highest batting average' do
+        top_player_stats.highest_batting_average.must_equal 'batting_average_player'
+      end
     end
-  end
 
-  describe '#most_home_runs' do
-    it 'should return the player_id with the highest home runs' do
-      top_player_stats.most_home_runs.must_equal 'home_runs_player'
+    describe '#most_rbis' do
+      it 'should return the player_id with the highest rbis' do
+        top_player_stats.most_rbis.must_equal 'rbis_player'
+      end
+    end
+
+    describe '#most_home_runs' do
+      it 'should return the player_id with the highest home runs' do
+        top_player_stats.most_home_runs.must_equal 'home_runs_player'
+      end
     end
   end
 end

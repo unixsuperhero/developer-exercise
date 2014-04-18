@@ -48,7 +48,10 @@ describe BattingFile do
       assert BattingFile.load(SAMPLE_DATA).class == BattingFile
     end
 
-    it 'should contain 3 CSV Rows'
+    it 'should contain 2 CSV Rows' do
+      row_count = BattingFile.load(SAMPLE_DATA).rows.count
+      assert row_count == 2, "#{row_count} is not 2"
+    end
   end
 end
 

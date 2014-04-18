@@ -141,8 +141,10 @@ class Stats
 
   def triple_crown_winner(league,year)
     stats = Stats.new(years.by_league(league).by_year(year).by_minimum_at_bats(400))
-    puts stats.years.count
-    stats.highest_batting_average == stats.most_home_runs && stats.most_home_runs == stats.most_rbis && stats.most_rbis || '(No winner)'
+    stats.highest_batting_average == stats.most_home_runs &&
+      stats.most_home_runs == stats.most_rbis &&
+      stats.most_rbis ||
+      '(No winner)'
   end
 end
 

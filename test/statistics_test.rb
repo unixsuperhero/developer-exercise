@@ -87,6 +87,7 @@ describe 'Exercise' do
   let(:player) { Player.new(player_id) }
   let(:year_row) { batting_file.rows.first }
   let(:year) { Year.new(year_row) }
+  let(:year_two) { Year.new(batting_file.rows[1]) }
 
   describe BattingFile do
     it 'should have a BattingFile class' do
@@ -135,6 +136,7 @@ describe 'Exercise' do
     describe '#batting_average' do
       it 'calculates the proper batting average' do
         year.batting_average.must_equal 0.2548
+        year_two.batting_average.must_equal 0.2931
       end
 
       it 'returns a float' do

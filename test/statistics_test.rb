@@ -136,10 +136,10 @@ describe 'Exercise' do
     end
 
     it 'should set values to 0 if stats are nil' do
-      sample_data = <<-SAMPLE
+      sample_data = <<SAMPLE
 playerID,yearID,league,teamID,G,AB,R,H,2B,3B,HR,RBI,SB,CS
 aardsda01,2012,AL,NYA,1,,,,,,,,,
-        SAMPLE
+SAMPLE
       this_year = Year.new BattingFile.load(sample_data).rows.first
       this_year.ab.must_equal 0
     end

@@ -3,7 +3,7 @@
 
 * Include setup instructions
 * echo results of:
-    1. most improved batting average if at-bats > 200
+    1. most improved batting average if at-bats > 200 # For 2009 -> 2010
     2. OAK.players.map(&:2007).each(&:slugging_percentage)
     3. AL and NL Triple Crown Winners for 2011 and 2012 || "(No winner)"
 

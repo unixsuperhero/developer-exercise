@@ -1,6 +1,11 @@
 require 'minitest/autorun'
 
 class BattingFile
+  def initialize(file='./batting.csv')
+  end
+
+  def self.load(data)
+  end
 
 end
 
@@ -19,6 +24,11 @@ end
 describe BattingFile do
   it 'should have a BattingFile class' do
     BattingFile.is_a? Class
+  end
+
+  describe 'BattingFile.load(csv_data)' do
+    it 'should return a new BattingFile instance'
+    it 'should contain 3 CSV Rows'
   end
 end
 

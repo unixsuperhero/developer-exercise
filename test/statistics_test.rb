@@ -103,14 +103,6 @@ class Stats
     end.first
   end
 
-  def limit_by_team(years, team)
-    years.select{|year| year.team == team }
-  end
-
-  def limit_by_year(years, year)
-    years.select{|y| y.year == year }
-  end
-
   def slugging_percentages_by_team_and_year(team,year)
     players.map{|id,player|
       player.years.fetch(year, Year.new)

@@ -43,9 +43,12 @@ end
 
 class Year
   attr_accessor :player_id, :year, :league, :team, :g, :ab, :r, :h, :doubles, :triples, :hr, :rbi, :sb, :cs
+
+  STATS = [ 'G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'SB', 'CS' ]
+
   def initialize(stats)
     stat_map.each{|header,var_name|
-      stats[header] = stats[header].to_i if stats[header] =~ /^\d+$/
+      stats[header] = stats[header].to_i if STATS.include?(header)
       instance_variable_set(var_name, stats[header])
     }
   end

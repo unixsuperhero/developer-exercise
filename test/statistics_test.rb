@@ -45,7 +45,10 @@ end
 class Year
   attr_accessor :player_id, :year, :league, :team, :g, :ab, :r, :h, :doubles, :triples, :hr, :rbi, :sb, :cs
   def initialize(stats)
-    stat_map.each{|header,var_name| instance_variable_set(var_name, stats[header]) }
+    stat_map.each{|header,var_name|
+      stats[header] = stats[header].to_i if stats[header] =~ /^\d+$/
+      instance_variable_set(var_name, stats[header])
+    }
   end
 
   def stat_map
@@ -122,6 +125,7 @@ describe 'Exercise' do
   describe Year do
     it 'should properly load all stats' do
       year.player_id.must_equal player_id
+      year.hr.must_equal 20
     end
 
     describe '#batting_average' do

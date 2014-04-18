@@ -258,8 +258,11 @@ describe 'Exercise' do
 
       it 'should return a subset of the original collection' do
         YearCollection.new(year_set).by_player('one').count.must_equal 3
-
       end
+    end
+
+    it 'should allow the by_* methods to be chainable' do
+      YearCollection.new(year_set).by_year(2000).by_team('OAK').count.must_equal 1
     end
   end
 end

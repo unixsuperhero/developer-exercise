@@ -217,8 +217,9 @@ describe 'Exercise' do
   end
 
   describe YearCollection do
+    let(:oak_2000) { Year.new('playerID' => 'one', 'yearID' => 2000, 'teamID' => 'OAK') }
     let(:year_set) {[
-        Year.new('playerID' => 'one', 'yearID' => 2000, 'teamID' => 'OAK'),
+        oak_2000,
         Year.new('playerID' => 'one', 'yearID' => 2001, 'teamID' => 'OAK'),
         Year.new('playerID' => 'one', 'yearID' => 2002, 'teamID' => 'OAK'),
         Year.new('playerID' => 'two', 'yearID' => 2000, 'teamID' => 'FLO'),
@@ -259,6 +260,10 @@ describe 'Exercise' do
       it 'should return a subset of the original collection' do
         YearCollection.new(year_set).by_player('one').count.must_equal 3
       end
+    end
+
+    it 'expects the proper results when chaining methods' do
+      YearCollection.new(year_set).by_year(2000).by_team('OAK').years.must_equal [oak_2000]
     end
 
     it 'should allow the by_* methods to be chainable' do

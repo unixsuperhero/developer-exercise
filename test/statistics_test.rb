@@ -12,17 +12,18 @@ class BattingFile
     batting_file = new.tap{|file|
       file.data = data
       file.parse
-      file.load_players
+      file.load_years
     }
   end
 
   def parse
-    @rows ||= CSV.parse(data, headers: true)
+    @rows ||= CSV.parse(@data, headers: true)
   end
 
-  def load_players
+  def load_years
     @years = YearCollection.new parse.map do |year|
-      Year.new(year)
+      puts "year => #{year}"
+      break Year.new(year)
     end
   end
 end
@@ -140,10 +141,14 @@ class Stats
     rbi = set.max{|y| y.rbi }.player
     avg == hrs && hrs == rbi && avg || '(No winner)'
   end
-
 end
 
+years = BattingFile.new('./public/batting.csv').load_years
+puts years.to_a.first.class
+#puts years.to_a.first.map{|k,v| puts "#{k} => #{v}" }
+#puts Stats.new(years).most_improved_batting_average(2009,2010)
 
+__END__
 SAMPLE_DATA = <<CSV_DATA
 playerID,yearID,league,teamID,G,AB,R,H,2B,3B,HR,RBI,SB,CS
 abreubo01,2010,AL,LAA,154,573,88,146,41,1,20,78,24,10
@@ -151,8 +156,8 @@ abreubo01,2009,AL,LAA,152,563,96,165,29,3,15,103,30,8
 CSV_DATA
 
 describe 'Exercise' do
-  let(:batting_file) { BattingFile.load(SAMPLE_DATA) }
-  let(:player_id) { 'abreubo01' }
+  let(:batting_file) {BattingFile.load(SAMPLE_DATA) }
+  let(:player_id) { 'areubo01' }
   let(:year_row) {{
     'playerID' => player_id,
     'yearID' => '2009',

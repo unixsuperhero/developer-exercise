@@ -141,10 +141,6 @@ class Stats
   def triple_crown_winner(league,year)
     @years = years.by_league(league).by_year(year).by_minimum_at_bats(400)
     highest_batting_average == most_home_runs && most_home_runs == most_rbis && most_rbis || '(No winner)'
-    # avg = set.max_by{|y| y.batting_average }.player
-    # hrs = set.max_by{|y| y.hr }.player
-    # rbi = set.max_by{|y| y.rbi }.player
-    # avg == hrs && hrs == rbi && avg || '(No winner)'
   end
 end
 

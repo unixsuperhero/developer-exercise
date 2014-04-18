@@ -38,19 +38,6 @@ class YearCollection
   end
 end
 
-class Player
-  attr_accessor :id, :years
-  def initialize(id, years={})
-    @id = id
-    @years = years
-  end
-
-  def add_year(stats)
-    this_year = Year.new(stats)
-    years.merge!(this_year.year => this_year)
-  end
-end
-
 class Year
   attr_accessor :player_id, :year, :league, :team, :g, :ab, :r, :h, :doubles, :triples, :hr, :rbi, :sb, :cs
 
@@ -145,7 +132,6 @@ CSV_DATA
 describe 'Exercise' do
   let(:batting_file) { BattingFile.load(SAMPLE_DATA) }
   let(:player_id) { 'abreubo01' }
-  let(:player) { Player.new(player_id) }
   let(:year_row) {{
     'playerID' => player_id,
     'yearID' => '2009',
@@ -223,61 +209,6 @@ describe 'Exercise' do
 
         this_year.slugging_percentage.must_equal (40 / 100.to_f) # => 0.4
       end
-    end
-  end
-
-  describe Stats do
-    describe '#years_meet_ab_requirement(years,at_bats)' do
-      it 'should be true if all match' do
-        Stats.new({}).years_meet_ab_requirement?([
-            Year.new('AB' => 10),
-            Year.new('AB' => 9)
-          ], 8).must_equal true
-      end
-
-      it 'should be false if any are below the threshold' do
-        Stats.new({}).years_meet_ab_requirement?([
-            Year.new('AB' => 10),
-            Year.new('AB' => 9)
-          ], 10).must_equal false
-      end
-    end
-    describe '#most_improved_batting_average(from_year,to_year)' do
-      it 'should skip players with < 200 at_bats' do
-        Stats.new({
-          'one' => Player.new('one', {
-            2000 => Year.new('H' => 50, 'AB' => 200),
-            2001 => Year.new('H' => 100, 'AB' => 200)
-          }),
-          'two' => Player.new('two', {
-            2000 => Year.new('H' => 1, 'AB' => 199),
-            2001 => Year.new('H' => 200, 'AB' => 200)
-          })
-        }).most_improved_batting_average(2000, 2001).must_equal 'one'
-      end
-
-      it 'should return the name with the highest delta' do
-        Stats.new({
-          'one' => Player.new('one', {
-            2000 => Year.new('H' => 50, 'AB' => 200),
-            2001 => Year.new('H' => 100, 'AB' => 200)
-          }),
-          'two' => Player.new('two', {
-            2000 => Year.new('H' => 1, 'AB' => 200),
-            2001 => Year.new('H' => 200, 'AB' => 200)
-          })
-        }).most_improved_batting_average(2000, 2001).must_equal 'two'
-      end
-    end
-
-    describe '#slugging_percentages_by_team_and_year(team,year)' do
-      it 'should return years and percentages matching the parameters'
-    end
-
-    describe '#triple_crown_winner(league,year)' do
-      it 'should ignore players with < 400 at_bats'
-      it 'should return "(No winner)" if no player meets the criteria'
-      it 'should return the player if all 3 criteria are met'
     end
   end
 end

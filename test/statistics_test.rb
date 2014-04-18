@@ -96,8 +96,17 @@ describe 'Exercise' do
     'H' => '1234',
     'HR' => '20'
   }}
+  let(:year_row_two) {{
+    'playerID' => player_id,
+    'yearID' => '2010',
+    'league' => 'AL',
+    'teamID' => 'LAA',
+    'AB' => '10000',
+    'H' => '4321',
+    'HR' => '20'
+  }}
   let(:year) { Year.new(year_row) }
-  let(:year_two) { Year.new(batting_file.rows[1]) }
+  let(:year_two) { Year.new(year_row_two) }
 
   describe BattingFile do
     it 'should have a BattingFile class' do
@@ -155,7 +164,7 @@ SAMPLE
     describe '#batting_average' do
       it 'calculates the proper batting average' do
         year.batting_average.must_equal 0.1234
-        year_two.batting_average.must_equal 0.2931
+        year_two.batting_average.must_equal 0.4321
       end
 
       it 'returns a float' do

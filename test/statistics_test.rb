@@ -30,8 +30,10 @@ class BattingFile
 end
 
 class Player
-  def initialize(stats)
-
+  attr_accessor :id, :years
+  def initialize(id, years=[])
+    @id = id
+    @years = years
   end
 end
 
@@ -59,12 +61,19 @@ describe BattingFile do
     end
 
     it 'should contain an array with 2 elements' do
-      assert batting_file.rows.count == 2, "#{batting_file.rows.count} is not 2"
+      batting_file.rows.count.must_equal 2, "#{batting_file.rows.count} is not 2"
     end
 
     it 'should return 1 player class' do
       assert batting_file.players.count == 1
     end
+  end
+end
+
+describe Player do
+  let(:player) { Player.new('john doe') }
+  describe '#add_year' do
+
   end
 end
 
